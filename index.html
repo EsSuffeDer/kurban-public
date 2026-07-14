@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Kurban Bilgileri — Esenler Suffe Derneği</title>
+  <style>
+    /* Minimal, mobil uyumlu stil */
+    body { font-family: sans-serif; max-width: 480px; margin: 0 auto; padding: 20px; }
+    .badge { padding: 4px 10px; border-radius: 6px; background: #027A7C; color: #fff; }
+    .card  { border: 1px solid #ddd; border-radius: 10px; padding: 20px; margin-top: 20px; }
+  </style>
+</head>
+<body>
+  <img src="suffe_logo.png" width="80" alt="Esenler Suffe">
+  <h2>Esenler Suffe Derneği</h2>
+  <div id="content">Yükleniyor...</div>
+
+  <script>
+    const SUPABASE_URL     = 'https://lazyblrkqjrqfrjqbbna.supabase.co/rest/v1/';
+    const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImxhenlibHJrcWpycWZyanFiYm5hIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODQwMTMwMTYsImV4cCI6MjA5OTU4OTAxNn0.mKrDprUmkv2HUnNNGTGFZaJFfKf_NMEOdKRaUq7_qVU'; 
+    const id = new URLSearchParams(window.location.search).get('id');
+
+    if (!id) {
+      document.getElementById('content').innerHTML = 'Geçersiz bağlantı.';
+    } else {
+      fetch(`${SUPABASE_URL}/rest/v1/public_kurban_view?id=eq.${id}`, {
+        headers: {
+          'apikey': SUPABASE_ANON_KEY,
+          'Authorization': `Bearer ${SUPABASE_ANON_KEY}`
+        }
+      })
+      .then(r => r.json())
+      .then(data => {
+        if (!data.length) {
+          document.getElementById('content').innerHTML = 'Kayıt bulunamadı.';
+          return;
+        }
+        const k = data[0];
+        const asamaLabel = {
+          'HISSELER_KAYDEDILIYOR': '📝 Kaydediliyor',
+          'TAMAMLANDI': '✅ Tamamlandı',
+          'KESIM_YAPILDI': '🔪 Kesim Yapıldı',
+          'VIDEO_YUKLENDI': '🎬 Video Yüklendi',
+          'BITTI': '✅ Her Şey Tamam',
+          'KAYIT_ALINDI': '📝 Kayıt Alındı'
+        };
+        document.getElementById('content').innerHTML = `
+          <div class="card">
+            <p><strong>Sahip:</strong> ${k.sahip_adi}</p>
+            <p><strong>Niyet:</strong> ${k.niyet}</p>
+            <p><strong>Lokasyon:</strong> ${k.lokasyon}</p>
+            <p><strong>Yıl:</strong> ${k.yil}</p>
+            <p><span class="badge">${asamaLabel[k.asama] || k.asama}</span></p>
+            ${k.video_url ? `<p><a href="${k.video_url}" target="_blank">🎬 Video İzle</a></p>` : ''}
+          </div>
+        `;
+      });
+    }
+  </script>
+</body>
+</html>
