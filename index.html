@@ -3,26 +3,472 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Kurban Bilgileri — Esenler Suffe Derneği</title>
+  <title>Kurban Takip — Esenler Suffe Derneği</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700;800;900&display=swap" rel="stylesheet">
   <style>
-    /* Minimal, mobil uyumlu stil */
-    body { font-family: sans-serif; max-width: 480px; margin: 0 auto; padding: 20px; }
-    .badge { padding: 4px 10px; border-radius: 6px; background: #027A7C; color: #fff; }
-    .card  { border: 1px solid #ddd; border-radius: 10px; padding: 20px; margin-top: 20px; }
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --teal:       #027A7C;
+      --teal-dark:  #015557;
+      --teal-light: #04A8AB;
+      --teal-faint: #E1F5F5;
+      --gold:       #C8963E;
+      --text:       #1A1A2E;
+      --muted:      #64748B;
+      --border:     #E2E8F0;
+      --white:      #FFFFFF;
+      --bg:         #F0F9F9;
+      --card-shadow: 0 20px 60px rgba(2,122,124,.13), 0 4px 16px rgba(0,0,0,.07);
+    }
+
+    html { scroll-behavior: smooth; }
+
+    body {
+      font-family: 'Nunito', sans-serif;
+      background: var(--bg);
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+    }
+
+    /* ── HEADER ── */
+    .header {
+      width: 100%;
+      background: linear-gradient(135deg, var(--teal-dark) 0%, var(--teal) 50%, var(--teal-light) 100%);
+      padding: 36px 24px 56px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      position: relative;
+      overflow: hidden;
+    }
+    .header::before {
+      content: '';
+      position: absolute;
+      width: 300px; height: 300px;
+      border-radius: 50%;
+      background: rgba(255,255,255,.06);
+      top: -80px; right: -60px;
+    }
+    .header::after {
+      content: '';
+      position: absolute;
+      width: 200px; height: 200px;
+      border-radius: 50%;
+      background: rgba(255,255,255,.04);
+      bottom: -60px; left: -40px;
+    }
+    .logo-wrap {
+      width: 90px; height: 90px;
+      border-radius: 50%;
+      background: rgba(255,255,255,.15);
+      border: 3px solid rgba(255,255,255,.35);
+      display: flex; align-items: center; justify-content: center;
+      margin-bottom: 16px;
+      backdrop-filter: blur(8px);
+      animation: popIn .6s cubic-bezier(.34,1.56,.64,1) both;
+    }
+    .logo-wrap img { width: 66px; height: 66px; object-fit: contain; border-radius: 50%; }
+    .org-name {
+      color: rgba(255,255,255,.95);
+      font-size: 15px;
+      font-weight: 700;
+      letter-spacing: .08em;
+      text-transform: uppercase;
+      animation: fadeUp .5s .2s ease both;
+    }
+    .org-sub {
+      color: rgba(255,255,255,.65);
+      font-size: 12px;
+      font-weight: 600;
+      letter-spacing: .12em;
+      text-transform: uppercase;
+      margin-top: 4px;
+      animation: fadeUp .5s .3s ease both;
+    }
+
+    /* ── WAVE ── */
+    .wave {
+      width: 100%;
+      margin-top: -2px;
+      display: block;
+    }
+
+    /* ── MAIN CARD ── */
+    .container {
+      width: 100%;
+      max-width: 480px;
+      padding: 0 16px 48px;
+      margin-top: -32px;
+      position: relative;
+      z-index: 1;
+    }
+    .card {
+      background: var(--white);
+      border-radius: 20px;
+      box-shadow: var(--card-shadow);
+      overflow: hidden;
+      animation: slideUp .55s .15s cubic-bezier(.22,.68,0,1.2) both;
+    }
+    .card-top {
+      background: linear-gradient(135deg, var(--teal-faint), #fff);
+      padding: 28px 28px 20px;
+      border-bottom: 1px solid var(--border);
+      text-align: center;
+    }
+    .sahip-name {
+      font-size: 26px;
+      font-weight: 900;
+      color: var(--text);
+      letter-spacing: -.01em;
+      line-height: 1.2;
+    }
+    .niyet-badge {
+      display: inline-block;
+      margin-top: 10px;
+      background: var(--teal);
+      color: #fff;
+      font-size: 12px;
+      font-weight: 700;
+      letter-spacing: .08em;
+      text-transform: uppercase;
+      padding: 4px 14px;
+      border-radius: 20px;
+    }
+
+    /* ── STATUS STEPPER ── */
+    .stepper-wrap {
+      padding: 24px 28px 20px;
+      border-bottom: 1px solid var(--border);
+    }
+    .stepper-label {
+      font-size: 11px;
+      font-weight: 700;
+      letter-spacing: .1em;
+      text-transform: uppercase;
+      color: var(--muted);
+      margin-bottom: 16px;
+    }
+    .stepper {
+      display: flex;
+      align-items: center;
+      gap: 0;
+    }
+    .step {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      flex: 1;
+      position: relative;
+    }
+    .step:not(:last-child)::after {
+      content: '';
+      position: absolute;
+      top: 14px;
+      left: 50%;
+      width: 100%;
+      height: 2px;
+      background: var(--border);
+      z-index: 0;
+      transition: background .4s;
+    }
+    .step.done:not(:last-child)::after { background: var(--teal); }
+    .step-dot {
+      width: 28px; height: 28px;
+      border-radius: 50%;
+      background: var(--border);
+      display: flex; align-items: center; justify-content: center;
+      font-size: 13px;
+      position: relative; z-index: 1;
+      transition: all .3s;
+      border: 2px solid var(--border);
+    }
+    .step.done .step-dot {
+      background: var(--teal);
+      border-color: var(--teal);
+      color: #fff;
+    }
+    .step.active .step-dot {
+      background: #fff;
+      border-color: var(--teal);
+      box-shadow: 0 0 0 4px rgba(2,122,124,.15);
+      animation: pulse 1.8s ease-in-out infinite;
+    }
+    .step-text {
+      font-size: 10px;
+      font-weight: 700;
+      color: var(--muted);
+      margin-top: 6px;
+      text-align: center;
+      letter-spacing: .01em;
+      line-height: 1.3;
+    }
+    .step.done .step-text, .step.active .step-text { color: var(--teal); }
+
+    /* ── INFO ROWS ── */
+    .info-list { padding: 20px 28px; border-bottom: 1px solid var(--border); }
+    .info-row {
+      display: flex;
+      align-items: center;
+      gap: 14px;
+      padding: 10px 0;
+    }
+    .info-row:not(:last-child) { border-bottom: 1px solid #F1F5F9; }
+    .info-icon {
+      width: 38px; height: 38px;
+      border-radius: 10px;
+      background: var(--teal-faint);
+      display: flex; align-items: center; justify-content: center;
+      font-size: 18px;
+      flex-shrink: 0;
+    }
+    .info-col { display: flex; flex-direction: column; gap: 1px; }
+    .info-key { font-size: 11px; font-weight: 700; color: var(--muted); text-transform: uppercase; letter-spacing: .06em; }
+    .info-val { font-size: 15px; font-weight: 700; color: var(--text); }
+
+    /* ── STATUS BANNER ── */
+    .status-banner {
+      margin: 0 28px 20px;
+      border-radius: 12px;
+      padding: 14px 18px;
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      font-size: 14px;
+      font-weight: 700;
+    }
+    .status-banner.s-kayit    { background: #FEF9EC; color: #92620A; border: 1.5px solid #FADDAA; }
+    .status-banner.s-tamam    { background: #ECFDF5; color: #065F46; border: 1.5px solid #A7F3D0; }
+    .status-banner.s-kesim    { background: #EFF6FF; color: #1E40AF; border: 1.5px solid #BFDBFE; }
+    .status-banner.s-video    { background: #F5F3FF; color: #5B21B6; border: 1.5px solid #DDD6FE; }
+    .status-banner.s-bitti    { background: #ECFDF5; color: #065F46; border: 1.5px solid #6EE7B7; }
+    .status-icon { font-size: 22px; }
+    .status-texts { display: flex; flex-direction: column; gap: 1px; }
+    .status-title { font-size: 14px; font-weight: 800; }
+    .status-desc  { font-size: 12px; font-weight: 600; opacity: .75; }
+
+    /* ── VIDEO BUTTON ── */
+    .video-btn {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 10px;
+      margin: 0 28px 28px;
+      padding: 16px;
+      border-radius: 14px;
+      background: linear-gradient(135deg, var(--teal), var(--teal-light));
+      color: #fff;
+      font-size: 15px;
+      font-weight: 800;
+      text-decoration: none;
+      box-shadow: 0 6px 20px rgba(2,122,124,.35);
+      transition: transform .2s, box-shadow .2s;
+    }
+    .video-btn:hover { transform: translateY(-2px); box-shadow: 0 10px 28px rgba(2,122,124,.4); }
+    .video-btn:active { transform: translateY(0); }
+    .video-btn span { font-size: 22px; }
+
+    /* ── FOOTER ── */
+    .footer {
+      text-align: center;
+      padding: 8px 16px 32px;
+      font-size: 12px;
+      color: var(--muted);
+      font-weight: 600;
+    }
+    .footer strong { color: var(--teal); }
+
+    /* ── LOADING ── */
+    .loading {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      padding: 60px 20px;
+      gap: 16px;
+    }
+    .spinner {
+      width: 44px; height: 44px;
+      border: 4px solid var(--teal-faint);
+      border-top-color: var(--teal);
+      border-radius: 50%;
+      animation: spin .8s linear infinite;
+    }
+    .loading-text { color: var(--muted); font-size: 14px; font-weight: 700; }
+
+    /* ── ERROR ── */
+    .error-box {
+      padding: 40px 28px;
+      text-align: center;
+    }
+    .error-icon { font-size: 48px; margin-bottom: 12px; }
+    .error-title { font-size: 18px; font-weight: 800; color: var(--text); margin-bottom: 6px; }
+    .error-desc { font-size: 14px; color: var(--muted); font-weight: 600; }
+
+    /* ── ANIMATIONS ── */
+    @keyframes popIn   { from { transform: scale(.5); opacity: 0; } to { transform: scale(1); opacity: 1; } }
+    @keyframes fadeUp  { from { transform: translateY(12px); opacity: 0; } to { transform: translateY(0); opacity: 1; } }
+    @keyframes slideUp { from { transform: translateY(28px); opacity: 0; } to { transform: translateY(0); opacity: 1; } }
+    @keyframes spin    { to { transform: rotate(360deg); } }
+    @keyframes pulse   { 0%,100% { box-shadow: 0 0 0 4px rgba(2,122,124,.15); } 50% { box-shadow: 0 0 0 8px rgba(2,122,124,.25); } }
+    @keyframes shimmer {
+      0%   { background-position: -400px 0; }
+      100% { background-position:  400px 0; }
+    }
+
+    /* ── DARK MODE ── */
+    @media (prefers-color-scheme: dark) {
+      :root {
+        --bg:    #0D1F1F;
+        --white: #1A2E2E;
+        --text:  #E8F5F5;
+        --muted: #7AACAD;
+        --border:#223333;
+        --teal-faint: #0F3333;
+        --card-shadow: 0 20px 60px rgba(0,0,0,.4), 0 4px 16px rgba(0,0,0,.3);
+      }
+      .card-top { background: linear-gradient(135deg, #0F2E2E, #1A2E2E); }
+    }
+
+    @media (max-width: 400px) {
+      .step-text { font-size: 9px; }
+      .sahip-name { font-size: 22px; }
+      .header { padding: 28px 16px 48px; }
+    }
   </style>
 </head>
 <body>
-  <img src="suffe_logo.png" width="80" alt="Esenler Suffe">
-  <h2>Esenler Suffe Derneği</h2>
-  <div id="content">Yükleniyor...</div>
+
+  <header class="header">
+    <div class="logo-wrap">
+      <img src="suffe_logo.png" alt="Esenler Suffe Derneği">
+    </div>
+    <div class="org-name">Esenler Suffe Derneği</div>
+    <div class="org-sub">Kurban Takip Sistemi</div>
+  </header>
+
+  <svg class="wave" viewBox="0 0 1440 40" preserveAspectRatio="none" xmlns="http://www.w3.org/2000/svg">
+    <path d="M0,40 C360,0 1080,60 1440,20 L1440,0 L0,0 Z" fill="#027A7C"/>
+  </svg>
+
+  <main class="container">
+    <div class="card" id="card">
+      <div class="loading">
+        <div class="spinner"></div>
+        <div class="loading-text">Kurban bilgileri yükleniyor…</div>
+      </div>
+    </div>
+    <div class="footer">
+      <strong>Esenler Suffe Derneği</strong> · Kurban Takip Sistemi
+    </div>
+  </main>
 
   <script>
     const SUPABASE_URL     = 'https://lazyblrkqjrqfrjqbbna.supabase.co';
-    const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImxhenlibHJrcWpycWZyanFiYm5hIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODQwMTMwMTYsImV4cCI6MjA5OTU4OTAxNn0.mKrDprUmkv2HUnNNGTGFZaJFfKf_NMEOdKRaUq7_qVU'; 
+    const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImxhenlibHJrcWpycWZyanFiYm5hIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODQwMTMwMTYsImV4cCI6MjA5OTU4OTAxNn0.mKrDprUmkv2HUnNNGTGFZaJFfKf_NMEOdKRaUq7_qVU';
+
+    const ASAMA = {
+      HISSELER_KAYDEDILIYOR: { label: 'Kayıt Alındı',    desc: 'Hisseler sisteme kaydedildi',    cls: 's-kayit', icon: '📋', step: 0 },
+      TAMAMLANDI:            { label: 'Hisseler Tamamlandı', desc: 'Tüm hisseler doldu',          cls: 's-tamam', icon: '✅', step: 1 },
+      KAYIT_ALINDI:          { label: 'Kayıt Alındı',    desc: 'Kurban sisteme kaydedildi',       cls: 's-kayit', icon: '📋', step: 0 },
+      KESIM_YAPILDI:         { label: 'Kesim Yapıldı',   desc: 'Kurban kesildi',                  cls: 's-kesim', icon: '🌿', step: 2 },
+      VIDEO_YUKLENDI:        { label: 'Video Yüklendi',  desc: 'Kurban videosu hazır',            cls: 's-video', icon: '🎬', step: 3 },
+      BITTI:                 { label: 'Tamamlandı',      desc: 'Kurban sürecinin tamamı bitti',   cls: 's-bitti', icon: '✨', step: 4 },
+    };
+
+    const BUYUKBAS_STEPS = ['Kayıt', 'Tamam', 'Kesim', 'Video', 'Bitti'];
+    const KUCUKBAS_STEPS = ['Kayıt', 'Kesim', 'Video', 'Bitti'];
+
+    const LOKASYON_LABEL = { AFRIKA: 'Afrika', AFGANISTAN: 'Afganistan', YURT_ICI: 'Yurt İçi' };
+    const NIYET_LABEL    = { VACIP: 'Vacip', AKIKA: 'Akika', ADAK: 'Adak', NAFILE: 'Nafile', SUKUR: 'Şükür' };
+
     const id = new URLSearchParams(window.location.search).get('id');
 
+    function renderError(title, desc) {
+      document.getElementById('card').innerHTML = `
+        <div class="error-box">
+          <div class="error-icon">🔍</div>
+          <div class="error-title">${title}</div>
+          <div class="error-desc">${desc}</div>
+        </div>`;
+    }
+
+    function buildStepper(steps, activeStep) {
+      return steps.map((s, i) => {
+        const cls = i < activeStep ? 'step done' : i === activeStep ? 'step active' : 'step';
+        const dot = i < activeStep ? '✓' : i + 1;
+        return `<div class="${cls}">
+          <div class="step-dot">${i < activeStep ? '✓' : ''}</div>
+          <div class="step-text">${s}</div>
+        </div>`;
+      }).join('');
+    }
+
+    function render(k) {
+      const asama  = ASAMA[k.asama] || { label: k.asama, cls: 's-kayit', icon: '📋', step: 0, desc: '' };
+      const steps  = k.tur === 'buyukbas' ? BUYUKBAS_STEPS : KUCUKBAS_STEPS;
+      const lokLbl = LOKASYON_LABEL[k.lokasyon] || k.lokasyon;
+      const niyLbl = NIYET_LABEL[k.niyet]       || k.niyet;
+
+      const grupInfo = k.grup_no
+        ? `<div class="info-row">
+             <div class="info-icon">🐂</div>
+             <div class="info-col">
+               <div class="info-key">Kurban No</div>
+               <div class="info-val">${k.grup_no}. Kurban${k.sira_no ? ' · ' + k.sira_no + '. Hisse' : ''}</div>
+             </div>
+           </div>` : '';
+
+      const videoBtn = k.video_url
+        ? `<a class="video-btn" href="${k.video_url}" target="_blank">
+             <span>🎬</span> Kurban Videosunu İzle
+           </a>` : '';
+
+      document.getElementById('card').innerHTML = `
+        <div class="card-top">
+          <div class="sahip-name">${k.sahip_adi}</div>
+          <div class="niyet-badge">${niyLbl} Kurbanı</div>
+        </div>
+
+        <div class="stepper-wrap">
+          <div class="stepper-label">Süreç Durumu</div>
+          <div class="stepper">${buildStepper(steps, asama.step)}</div>
+        </div>
+
+        <div class="info-list">
+          <div class="info-row">
+            <div class="info-icon">📍</div>
+            <div class="info-col">
+              <div class="info-key">Bağış Yeri</div>
+              <div class="info-val">${lokLbl}</div>
+            </div>
+          </div>
+          <div class="info-row">
+            <div class="info-icon">📅</div>
+            <div class="info-col">
+              <div class="info-key">Yıl</div>
+              <div class="info-val">${k.yil} Kurban Bayramı</div>
+            </div>
+          </div>
+          ${grupInfo}
+        </div>
+
+        <div class="status-banner ${asama.cls}">
+          <div class="status-icon">${asama.icon}</div>
+          <div class="status-texts">
+            <div class="status-title">${asama.label}</div>
+            <div class="status-desc">${asama.desc}</div>
+          </div>
+        </div>
+
+        ${videoBtn}
+      `;
+    }
+
     if (!id) {
-      document.getElementById('content').innerHTML = 'Geçersiz bağlantı.';
+      renderError('Geçersiz Bağlantı', 'QR kodu uygulamadan okutunuz.');
     } else {
       fetch(`${SUPABASE_URL}/rest/v1/public_kurban_view?id=eq.${id}`, {
         headers: {
@@ -32,29 +478,14 @@
       })
       .then(r => r.json())
       .then(data => {
-        if (!data.length) {
-          document.getElementById('content').innerHTML = 'Kayıt bulunamadı.';
+        if (!data || !data.length) {
+          renderError('Kayıt Bulunamadı', 'Bu bağlantıya ait kurban kaydı mevcut değil.');
           return;
         }
-        const k = data[0];
-        const asamaLabel = {
-          'HISSELER_KAYDEDILIYOR': '📝 Kaydediliyor',
-          'TAMAMLANDI': '✅ Tamamlandı',
-          'KESIM_YAPILDI': '🔪 Kesim Yapıldı',
-          'VIDEO_YUKLENDI': '🎬 Video Yüklendi',
-          'BITTI': '✅ Her Şey Tamam',
-          'KAYIT_ALINDI': '📝 Kayıt Alındı'
-        };
-        document.getElementById('content').innerHTML = `
-          <div class="card">
-            <p><strong>Sahip:</strong> ${k.sahip_adi}</p>
-            <p><strong>Niyet:</strong> ${k.niyet}</p>
-            <p><strong>Lokasyon:</strong> ${k.lokasyon}</p>
-            <p><strong>Yıl:</strong> ${k.yil}</p>
-            <p><span class="badge">${asamaLabel[k.asama] || k.asama}</span></p>
-            ${k.video_url ? `<p><a href="${k.video_url}" target="_blank">🎬 Video İzle</a></p>` : ''}
-          </div>
-        `;
+        render(data[0]);
+      })
+      .catch(() => {
+        renderError('Bağlantı Hatası', 'Sunucuya ulaşılamadı, lütfen tekrar deneyin.');
       });
     }
   </script>
