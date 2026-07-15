@@ -250,26 +250,34 @@
     .status-title { font-size: 14px; font-weight: 800; }
     .status-desc  { font-size: 12px; font-weight: 600; opacity: .75; }
 
-    /* ── VIDEO BUTTON ── */
+    /* ── VIDEO BUTTONS ── */
+    .video-wrap { padding: 0 28px 28px; display: flex; flex-direction: column; gap: 10px; }
     .video-btn {
       display: flex;
       align-items: center;
       justify-content: center;
       gap: 10px;
-      margin: 0 28px 28px;
-      padding: 16px;
+      padding: 15px;
       border-radius: 14px;
-      background: linear-gradient(135deg, var(--teal), var(--teal-light));
       color: #fff;
       font-size: 15px;
       font-weight: 800;
       text-decoration: none;
-      box-shadow: 0 6px 20px rgba(2,122,124,.35);
       transition: transform .2s, box-shadow .2s;
     }
-    .video-btn:hover { transform: translateY(-2px); box-shadow: 0 10px 28px rgba(2,122,124,.4); }
+    .video-btn:hover { transform: translateY(-2px); }
     .video-btn:active { transform: translateY(0); }
-    .video-btn span { font-size: 22px; }
+    .video-btn span { font-size: 20px; }
+    .video-btn.kesim {
+      background: linear-gradient(135deg, #1E40AF, #3B82F6);
+      box-shadow: 0 6px 20px rgba(30,64,175,.35);
+    }
+    .video-btn.kesim:hover { box-shadow: 0 10px 28px rgba(30,64,175,.4); }
+    .video-btn.dagitim {
+      background: linear-gradient(135deg, var(--teal), var(--teal-light));
+      box-shadow: 0 6px 20px rgba(2,122,124,.35);
+    }
+    .video-btn.dagitim:hover { box-shadow: 0 10px 28px rgba(2,122,124,.4); }
 
     /* ── FOOTER ── */
     .footer {
@@ -421,10 +429,16 @@
              </div>
            </div>` : '';
 
-      const videoBtn = k.video_url
-        ? `<a class="video-btn" href="${k.video_url}" target="_blank">
-             <span>🎬</span> Kurban Videosunu İzle
+      const videoKesim   = k.video_kesim_url
+        ? `<a class="video-btn kesim" href="${k.video_kesim_url}" target="_blank">
+             <span>🔪</span> Kesim Videosunu İzle
            </a>` : '';
+      const videoDagitim = k.video_dagitim_url
+        ? `<a class="video-btn dagitim" href="${k.video_dagitim_url}" target="_blank">
+             <span>🎬</span> Dağıtım Videosunu İzle
+           </a>` : '';
+      const videoWrap = (videoKesim || videoDagitim)
+        ? `<div class="video-wrap">${videoKesim}${videoDagitim}</div>` : '';
 
       document.getElementById('card').innerHTML = `
         <div class="card-top">
@@ -463,7 +477,7 @@
           </div>
         </div>
 
-        ${videoBtn}
+        ${videoWrap}
       `;
     }
 
