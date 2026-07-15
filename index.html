@@ -377,6 +377,13 @@
     const SUPABASE_URL     = 'https://lazyblrkqjrqfrjqbbna.supabase.co';
     const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImxhenlibHJrcWpycWZyanFiYm5hIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODQwMTMwMTYsImV4cCI6MjA5OTU4OTAxNn0.mKrDprUmkv2HUnNNGTGFZaJFfKf_NMEOdKRaUq7_qVU';
 
+    // Path'i tam Supabase Storage URL'ine çevirir
+    function toStorageUrl(path) {
+      if (!path) return null;
+      if (path.startsWith('http')) return path; // zaten tam URL
+      return `${SUPABASE_URL}/storage/v1/object/public/kurban-videos/${path}`;
+    }
+
     const ASAMA = {
       HISSELER_KAYDEDILIYOR: { label: 'Kayıt Alındı',    desc: 'Hisseler sisteme kaydedildi',    cls: 's-kayit', icon: '📋', step: 0 },
       TAMAMLANDI:            { label: 'Hisseler Tamamlandı', desc: 'Tüm hisseler doldu',          cls: 's-tamam', icon: '✅', step: 1 },
@@ -429,12 +436,15 @@
              </div>
            </div>` : '';
 
-      const videoKesim   = k.video_kesim_url
-        ? `<a class="video-btn kesim" href="${k.video_kesim_url}" target="_blank">
+      const kesimUrl   = toStorageUrl(k.video_kesim_url);
+      const dagitimUrl = toStorageUrl(k.video_dagitim_url);
+
+      const videoKesim   = kesimUrl
+        ? `<a class="video-btn kesim" href="${kesimUrl}" target="_blank">
              <span>🔪</span> Kesim Videosunu İzle
            </a>` : '';
-      const videoDagitim = k.video_dagitim_url
-        ? `<a class="video-btn dagitim" href="${k.video_dagitim_url}" target="_blank">
+      const videoDagitim = dagitimUrl
+        ? `<a class="video-btn dagitim" href="${dagitimUrl}" target="_blank">
              <span>🎬</span> Dağıtım Videosunu İzle
            </a>` : '';
       const videoWrap = (videoKesim || videoDagitim)
